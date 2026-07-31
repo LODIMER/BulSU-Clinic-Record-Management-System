@@ -6,10 +6,11 @@ A web-based clinic record management system for Bulacan State University, built 
 
 ### Clinic Staff
 - Login with username and password
-- Create and manage student/patient accounts
+- Create and manage student/patient records
 - Manage staff accounts and reset passwords
 - Full access to clinic records
 - Dashboard with patient count, appointments, visits, inventory alerts
+- Review and complete student-submitted clinic visit forms
 - Patient records (CRUD, search)
 - Clinic visit / medical record management
 - Appointment approval, rejection, rescheduling, completion
@@ -18,11 +19,18 @@ A web-based clinic record management system for Bulacan State University, built 
 - System activity log
 
 ### Student / Patient
-- Login with personal account
-- View personal clinic records and profile
-- Request and track appointments
-- View clinic visit history
-- Cannot access other students' records or medicine inventory
+- **No login account required**
+- Fill out the **Student Clinic Visit Form** when visiting the clinic
+- Information is saved directly to the clinic database
+- Clinic staff review and manage submitted visit records
+- Students cannot access the staff dashboard, other students' records, appointments, medicines, reports, or system activities
+
+## Student Process
+
+```
+Student visits clinic → Fills out Student Clinic Visit Form → Submits form
+→ Data saved to database → Clinic staff reviews submission → Staff completes visit record
+```
 
 ## Project Structure (MVC)
 
@@ -33,25 +41,9 @@ BulSU-Clinic-Record-Management-System/
 ├── seed_data.py            # Demo data seeder
 ├── requirements.txt
 ├── models/                 # MODEL - Data layer
-│   ├── database.py
-│   ├── user.py
-│   ├── patient.py
-│   ├── appointment.py
-│   ├── clinic_visit.py
-│   ├── medicine.py
-│   └── activity_log.py
 ├── controllers/            # CONTROLLER - Business logic & routes
-│   ├── auth_controller.py
-│   ├── dashboard_controller.py
-│   ├── patient_controller.py
-│   ├── visit_controller.py
-│   ├── appointment_controller.py
-│   ├── medicine_controller.py
-│   ├── report_controller.py
-│   └── activity_controller.py
+├── services/               # Business services
 └── views/                  # VIEW - UI templates & static files
-    ├── templates/
-    └── static/css/
 ```
 
 ## Setup & Run
@@ -73,15 +65,17 @@ BulSU-Clinic-Record-Management-System/
    python app.py
    ```
 
-5. **Open in browser:** http://localhost:5000
+5. **Open in browser**
+   - Staff login: http://localhost:5000/login
+   - Student form: http://localhost:5000/student-visit
 
-## Demo Accounts
+## Demo Account
 
-| Role    | Username  | Password    |
-|---------|-----------|-------------|
-| Staff   | staff     | staff123    |
-| Student | student1  | student123  |
-| Student | student2  | student123  |
+| Role  | Username | Password  |
+|-------|----------|-----------|
+| Staff | staff    | staff123  |
+
+Students do not have login accounts. Use the Student Clinic Visit Form at `/student-visit`.
 
 ## Technology Stack
 
@@ -89,4 +83,4 @@ BulSU-Clinic-Record-Management-System/
 - **SQLite** database
 - **Jinja2** HTML templates
 - **Werkzeug** password hashing
-- Role-based access control (staff / patient)
+- Staff-only access control

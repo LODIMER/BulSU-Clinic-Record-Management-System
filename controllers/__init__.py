@@ -6,6 +6,7 @@ from controllers.appointment_controller import appointment_bp
 from controllers.medicine_controller import medicine_bp
 from controllers.report_controller import report_bp
 from controllers.activity_controller import activity_bp, staff_bp
+from controllers.student_form_controller import student_form_bp
 
 __all__ = [
     "auth_bp",
@@ -17,4 +18,5 @@ __all__ = [
     "report_bp",
     "activity_bp",
     "staff_bp",
+    "student_form_bp",
 ]

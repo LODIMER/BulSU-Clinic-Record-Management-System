@@ -1,11 +1,11 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 
-from controllers.decorators import login_required, patient_required, staff_required
+from controllers.decorators import staff_required
 from models.activity_log import ActivityLogModel
 from models.appointment import AppointmentModel
 from models.clinic_visit import ClinicVisitModel
 from models.patient import PatientModel
-from models.user import UserModel
+from services.gform_import import parse_gform_csv
 
 patient_bp = Blueprint("patients", __name__, url_prefix="/patients")
 
@@ -23,22 +23,12 @@ def list_patients():
 def add_patient():
     if request.method == "POST":
         data = _extract_patient_form()
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
 
         if not data["student_id"] or not data["first_name"] or not data["last_name"]:
             flash("Student ID, first name, and last name are required.", "danger")
             return render_template("staff/patients/form.html", patient=None)
 
-        user_id = None
-        if username and password:
-            try:
-                user_id = UserModel.create(username, password, "patient")
-            except Exception:
-                flash("Username already exists.", "danger")
-                return render_template("staff/patients/form.html", patient=None)
-
-        patient_id = PatientModel.create(data, user_id)
+        patient_id = PatientModel.create(data)
         ActivityLogModel.log(
             session["user_id"],
             "Added patient record",
@@ -50,19 +40,61 @@ def add_patient():
     return render_template("staff/patients/form.html", patient=None)
 
 
+@patient_bp.route("/import", methods=["GET", "POST"])
+@staff_required
+def import_gform():
+    if request.method == "POST":
+        file = request.files.get("csv_file")
+        if not file or not file.filename:
+            flash("Please select a CSV file exported from Google Forms.", "danger")
+            return render_template("staff/patients/import.html")
+
+        if not file.filename.lower().endswith(".csv"):
+            flash("Only CSV files are supported. Export responses from Google Sheets.", "danger")
+            return render_template("staff/patients/import.html")
+
+        update_existing = request.form.get("update_existing") == "1"
+        parsed = parse_gform_csv(file.read())
+
+        if not parsed["rows"]:
+            for err in parsed["errors"]:
+                flash(err, "warning")
+            flash("No valid rows found in the CSV file.", "danger")
+            return render_template(
+                "staff/patients/import.html",
+                preview=None,
+                headers=parsed.get("headers"),
+                mapping=parsed.get("mapping"),
+            )
+
+        stats = PatientModel.import_rows(parsed["rows"], update_existing=update_existing)
+
+        ActivityLogModel.log(
+            session["user_id"],
+            "Imported Google Form responses",
+            f"Imported: {stats['imported']}, Updated: {stats['updated']}, Skipped: {stats['skipped']}",
+        )
+
+        flash(
+            f"Import complete — {stats['imported']} added, "
+            f"{stats['updated']} updated, {stats['skipped']} skipped.",
+            "success",
+        )
+        for err in parsed["errors"] + stats["errors"]:
+            flash(err, "warning")
+
+        return redirect(url_for("patients.list_patients"))
+
+    return render_template("staff/patients/import.html")
+
+
 @patient_bp.route("/<int:patient_id>")
-@login_required
+@staff_required
 def view_patient(patient_id):
     patient = PatientModel.get_by_id(patient_id)
     if not patient:
         flash("Patient not found.", "danger")
-        return redirect(url_for("dashboard.index"))
-
-    if session.get("role") == "patient":
-        own = PatientModel.get_by_user_id(session["user_id"])
-        if not own or own["id"] != patient_id:
-            flash("You cannot access other patients' records.", "danger")
-            return redirect(url_for("dashboard.index"))
+        return redirect(url_for("patients.list_patients"))
 
     visits = ClinicVisitModel.get_by_patient(patient_id)
     appointments = AppointmentModel.get_by_patient(patient_id)
@@ -71,7 +103,7 @@ def view_patient(patient_id):
         patient=patient,
         visits=visits,
         appointments=appointments,
-        readonly=session.get("role") == "patient",
+        readonly=False,
     )
 
 
@@ -95,16 +127,6 @@ def edit_patient(patient_id):
         return redirect(url_for("patients.view_patient", patient_id=patient_id))
 
     return render_template("staff/patients/form.html", patient=patient)
-
-
-@patient_bp.route("/profile")
-@patient_required
-def my_profile():
-    patient = PatientModel.get_by_user_id(session["user_id"])
-    if not patient:
-        flash("No patient profile linked to your account.", "warning")
-        return redirect(url_for("dashboard.index"))
-    return redirect(url_for("patients.view_patient", patient_id=patient["id"]))
 
 
 def _extract_patient_form():

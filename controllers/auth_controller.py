@@ -22,6 +22,13 @@ def login():
 
         user = UserModel.authenticate(username, password)
         if user:
+            if user["role"] != "staff":
+                flash(
+                    "Students do not need to log in. Please use the Student Clinic Visit Form.",
+                    "info",
+                )
+                return redirect(url_for("student_form.visit_form"))
+
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             session["role"] = user["role"]

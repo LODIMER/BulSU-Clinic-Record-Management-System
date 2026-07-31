@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submitted - BulSU Clinic</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="public-form-page">
+        <div class="public-form-card success-card">
+            <div class="success-icon">&#10003;</div>
+            <h1>Form Submitted Successfully</h1>
+            <p>
+                Your clinic visit information has been saved to the BulSU Clinic system.
+                Please proceed to the clinic counter and wait for clinic staff to assist you.
+            </p>
+            {% if visit_id %}
+            <p class="reference-id">Reference: Visit #{{ visit_id }}</p>
+            {% endif %}
+            <a href="{{ url_for('student_form.visit_form') }}" class="btn btn-secondary">Submit Another Form</a>
+        </div>
+    </div>
+</body>
+</html>

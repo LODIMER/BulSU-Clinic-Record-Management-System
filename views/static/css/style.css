@@ -331,3 +331,111 @@ tbody tr:hover { background: #f8fafc; }
     padding: 2rem;
     color: var(--muted);
 }
+
+/* Public student visit form */
+.public-form-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+}
+
+.public-form-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 760px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.public-form-header { text-align: center; margin-bottom: 1rem; }
+.public-form-header h1 { font-size: 1.5rem; color: var(--primary); }
+.public-form-header p { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+
+.public-form-badge {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.public-form-intro {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.form-section {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-section legend {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0 0.5rem;
+    color: var(--primary);
+}
+
+.public-form-submit { width: 100%; padding: 0.75rem; margin-top: 0.5rem; }
+
+.public-form-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.success-card { text-align: center; max-width: 520px; }
+.success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: #dcfce7;
+    color: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.success-card h1 { font-size: 1.3rem; margin-bottom: 0.75rem; color: var(--primary); }
+.success-card p { color: var(--muted); margin-bottom: 1rem; line-height: 1.6; }
+.reference-id { font-weight: 600; color: var(--text); }
+
+.login-divider {
+    text-align: center;
+    margin: 1.25rem 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.login-student-link { width: 100%; text-align: center; display: block; padding: 0.65rem; }
+
+.login-hint {
+    margin-top: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.login-demo {
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+}

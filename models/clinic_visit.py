@@ -11,8 +11,8 @@ class ClinicVisitModel:
             """
             INSERT INTO clinic_visits (
                 patient_id, staff_id, visit_date, visit_time, reason,
-                vital_signs, assessment, treatment, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                symptoms, vital_signs, assessment, treatment, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 data["patient_id"],
@@ -20,6 +20,7 @@ class ClinicVisitModel:
                 data["visit_date"],
                 data["visit_time"],
                 data["reason"],
+                data.get("symptoms", ""),
                 data.get("vital_signs", ""),
                 data.get("assessment", ""),
                 data.get("treatment", ""),
@@ -30,6 +31,42 @@ class ClinicVisitModel:
         visit_id = cursor.lastrowid
         conn.close()
         return visit_id
+
+    @staticmethod
+    def create_student_submission(data):
+        """Create a clinic visit from a public student form (no staff assigned yet)."""
+        return ClinicVisitModel.create(data, staff_id=None)
+
+    @staticmethod
+    def update(visit_id, data, staff_id=None):
+        conn = get_db()
+        conn.execute(
+            """
+            UPDATE clinic_visits SET
+                visit_date = ?, visit_time = ?, reason = ?, symptoms = ?,
+                vital_signs = ?, assessment = ?, treatment = ?, notes = ?,
+                staff_id = COALESCE(?, staff_id)
+            WHERE id = ?
+            """,
+            (
+                data["visit_date"],
+                data["visit_time"],
+                data["reason"],
+                data.get("symptoms", ""),
+                data.get("vital_signs", ""),
+                data.get("assessment", ""),
+                data.get("treatment", ""),
+                data.get("notes", ""),
+                staff_id,
+                visit_id,
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def is_pending(visit):
+        return visit.get("staff_id") is None
 
     @staticmethod
     def get_by_id(visit_id):
@@ -104,6 +141,15 @@ class ClinicVisitModel:
     def count():
         conn = get_db()
         count = conn.execute("SELECT COUNT(*) as total FROM clinic_visits").fetchone()["total"]
+        conn.close()
+        return count
+
+    @staticmethod
+    def count_pending():
+        conn = get_db()
+        count = conn.execute(
+            "SELECT COUNT(*) as total FROM clinic_visits WHERE staff_id IS NULL"
+        ).fetchone()["total"]
         conn.close()
         return count
 

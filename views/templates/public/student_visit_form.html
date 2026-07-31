@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Clinic Visit Form - BulSU Clinic</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="public-form-page">
+        <div class="public-form-card">
+            <div class="public-form-header">
+                <h1>BulSU Clinic</h1>
+                <p>Student Clinic Visit Form</p>
+                <span class="public-form-badge">No login required</span>
+            </div>
+
+            <p class="public-form-intro">
+                Fill out this form when you visit the BULSU Clinic. Your information will be
+                saved directly to the clinic system and reviewed by clinic staff.
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('student_form.visit_form') }}">
+                <fieldset class="form-section">
+                    <legend>Student Information</legend>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="student_id">Student ID *</label>
+                            <input type="text" id="student_id" name="student_id"
+                                   value="{{ form.get('student_id', '') }}" required
+                                   placeholder="e.g. 2021-00001">
+                        </div>
+                        <div class="form-group">
+                            <label for="first_name">First Name *</label>
+                            <input type="text" id="first_name" name="first_name"
+                                   value="{{ form.get('first_name', '') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name *</label>
+                            <input type="text" id="last_name" name="last_name"
+                                   value="{{ form.get('last_name', '') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="course">Course / Program *</label>
+                            <input type="text" id="course" name="course"
+                                   value="{{ form.get('course', '') }}" required
+                                   placeholder="e.g. BS Information Technology">
+                        </div>
+                        <div class="form-group">
+                            <label for="year_level">Year Level *</label>
+                            <select id="year_level" name="year_level" required>
+                                <option value="">Select year level...</option>
+                                {% for level in ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'] %}
+                                <option value="{{ level }}" {% if form.get('year_level') == level %}selected{% endif %}>
+                                    {{ level }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_number">Contact Number</label>
+                            <input type="tel" id="contact_number" name="contact_number"
+                                   value="{{ form.get('contact_number', '') }}"
+                                   placeholder="e.g. 09171234567">
+                        </div>
+                        <div class="form-group">
+                            <label for="emergency_contact">Emergency Contact</label>
+                            <input type="text" id="emergency_contact" name="emergency_contact"
+                                   value="{{ form.get('emergency_contact', '') }}"
+                                   placeholder="Name - Contact number">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Visit Details</legend>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="visit_date">Date of Visit *</label>
+                            <input type="date" id="visit_date" name="visit_date"
+                                   value="{{ form.get('visit_date', today) }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="visit_time">Time of Visit *</label>
+                            <input type="time" id="visit_time" name="visit_time"
+                                   value="{{ form.get('visit_time', now|default('')) }}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason for Visit *</label>
+                        <input type="text" id="reason" name="reason"
+                               value="{{ form.get('reason', '') }}" required
+                               placeholder="e.g. Headache, fever, consultation">
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms or Health Concern *</label>
+                        <textarea id="symptoms" name="symptoms" required
+                                  placeholder="Describe your symptoms or health concern in detail">{{ form.get('symptoms', '') }}</textarea>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Medical Information (optional)</legend>
+                    <div class="form-group">
+                        <label for="medical_history">Medical History</label>
+                        <textarea id="medical_history" name="medical_history"
+                                  placeholder="Any relevant medical history">{{ form.get('medical_history', '') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="allergies">Allergies</label>
+                        <input type="text" id="allergies" name="allergies"
+                               value="{{ form.get('allergies', '') }}"
+                               placeholder="e.g. Penicillin, peanuts">
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary public-form-submit">Submit Visit Form</button>
+            </form>
+
+            <p class="public-form-footer">
+                Clinic staff only?
+                <a href="{{ url_for('auth.login') }}">Staff login</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

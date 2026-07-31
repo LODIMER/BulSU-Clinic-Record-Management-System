@@ -1,51 +1,114 @@
 {% extends "base.html" %}
+
 {% block title %}Visit Details - BulSU Clinic{% endblock %}
 
+
+
 {% block content %}
+
 <div class="page-header">
+
     <h1>Clinic Visit Record</h1>
+
+    {% if pending %}
+
+    <a href="{{ url_for('visits.complete_visit', visit_id=visit.id) }}" class="btn btn-primary">Complete Visit</a>
+
+    {% endif %}
+
 </div>
 
-<div class="card">
-    <div class="card-title">Visit Information</div>
-    <div class="detail-grid">
-        <div class="detail-item"><label>Patient</label><p>{{ visit.first_name }} {{ visit.last_name }} ({{ visit.student_id }})</p></div>
-        <div class="detail-item"><label>Date</label><p>{{ visit.visit_date }}</p></div>
-        <div class="detail-item"><label>Time</label><p>{{ visit.visit_time }}</p></div>
-        <div class="detail-item"><label>Reason</label><p>{{ visit.reason }}</p></div>
-        {% if not readonly %}
-        <div class="detail-item"><label>Vital Signs</label><p>{{ visit.vital_signs or '—' }}</p></div>
-        <div class="detail-item"><label>Assessment</label><p>{{ visit.assessment or '—' }}</p></div>
-        {% endif %}
-        <div class="detail-item"><label>Treatment</label><p>{{ visit.treatment or '—' }}</p></div>
-        <div class="detail-item"><label>Notes</label><p>{{ visit.notes or '—' }}</p></div>
-        {% if not readonly %}
-        <div class="detail-item"><label>Recorded By</label><p>{{ visit.staff_username or '—' }}</p></div>
-        {% endif %}
-    </div>
+
+
+{% if pending %}
+
+<div class="alert alert-warning">
+
+    This visit was submitted via the Student Clinic Visit Form and is pending staff review.
+
 </div>
 
-{% if medicines %}
-<div class="card">
-    <div class="card-title">Medicine Given</div>
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr><th>Medicine</th><th>Category</th><th>Quantity</th></tr>
-            </thead>
-            <tbody>
-                {% for m in medicines %}
-                <tr>
-                    <td>{{ m.name }}</td>
-                    <td>{{ m.category }}</td>
-                    <td>{{ m.quantity }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
 {% endif %}
 
-<a href="{{ url_for('visits.my_history' if readonly else 'visits.list_visits') }}" class="btn btn-secondary">Back</a>
+
+
+<div class="card">
+
+    <div class="card-title">Visit Information</div>
+
+    <div class="detail-grid">
+
+        <div class="detail-item"><label>Patient</label><p>{{ visit.first_name }} {{ visit.last_name }} ({{ visit.student_id }})</p></div>
+
+        <div class="detail-item"><label>Date</label><p>{{ visit.visit_date }}</p></div>
+
+        <div class="detail-item"><label>Time</label><p>{{ visit.visit_time }}</p></div>
+
+        <div class="detail-item"><label>Reason</label><p>{{ visit.reason }}</p></div>
+
+        <div class="detail-item"><label>Symptoms / Health Concern</label><p>{{ visit.symptoms or '—' }}</p></div>
+
+        <div class="detail-item"><label>Vital Signs</label><p>{{ visit.vital_signs or '—' }}</p></div>
+
+        <div class="detail-item"><label>Assessment</label><p>{{ visit.assessment or '—' }}</p></div>
+
+        <div class="detail-item"><label>Treatment</label><p>{{ visit.treatment or '—' }}</p></div>
+
+        <div class="detail-item"><label>Notes</label><p>{{ visit.notes or '—' }}</p></div>
+
+        <div class="detail-item"><label>Recorded By</label><p>{{ visit.staff_username or 'Awaiting staff review' }}</p></div>
+
+    </div>
+
+</div>
+
+
+
+{% if medicines %}
+
+<div class="card">
+
+    <div class="card-title">Medicine Given</div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr><th>Medicine</th><th>Category</th><th>Quantity</th></tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for m in medicines %}
+
+                <tr>
+
+                    <td>{{ m.name }}</td>
+
+                    <td>{{ m.category }}</td>
+
+                    <td>{{ m.quantity }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+
+<a href="{{ url_for('visits.list_visits') }}" class="btn btn-secondary">Back</a>
+
 {% endblock %}
+

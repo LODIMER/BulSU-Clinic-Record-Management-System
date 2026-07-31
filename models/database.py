@@ -63,6 +63,7 @@ def init_db():
             visit_date TEXT NOT NULL,
             visit_time TEXT NOT NULL,
             reason TEXT NOT NULL,
+            symptoms TEXT,
             vital_signs TEXT,
             assessment TEXT,
             treatment TEXT,
@@ -104,4 +105,16 @@ def init_db():
     )
 
     conn.commit()
+    _migrate(conn)
     conn.close()
+
+
+def _migrate(conn):
+    """Apply incremental schema updates for existing databases."""
+    cursor = conn.cursor()
+    columns = {
+        row[1] for row in cursor.execute("PRAGMA table_info(clinic_visits)").fetchall()
+    }
+    if "symptoms" not in columns:
+        cursor.execute("ALTER TABLE clinic_visits ADD COLUMN symptoms TEXT")
+    conn.commit()

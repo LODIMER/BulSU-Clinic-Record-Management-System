@@ -12,6 +12,7 @@ from controllers import (
     patient_bp,
     report_bp,
     staff_bp,
+    student_form_bp,
     visit_bp,
 )
 from models.database import init_db
@@ -28,6 +29,7 @@ def create_app():
     init_db()
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(student_form_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(patient_bp)
     app.register_blueprint(visit_bp)
