@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Medicine Inventory - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Medicine Inventory</h1>
+    <a href="{{ url_for('medicines.add_medicine') }}" class="btn btn-primary">Add Medicine</a>
+</div>
+
+{% if low_stock %}
+<div class="card">
+    <div class="card-title" style="color:var(--warning);">Low Stock Alerts</div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Name</th><th>Category</th><th>Quantity</th></tr></thead>
+            <tbody>
+                {% for m in low_stock %}
+                <tr><td>{{ m.name }}</td><td>{{ m.category }}</td><td>{{ m.quantity }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if expired %}
+<div class="card">
+    <div class="card-title" style="color:var(--danger);">Expired Medicines</div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Name</th><th>Category</th><th>Expiration</th></tr></thead>
+            <tbody>
+                {% for m in expired %}
+                <tr><td>{{ m.name }}</td><td>{{ m.category }}</td><td>{{ m.expiration_date }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-title">All Medicines</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Category</th><th>Quantity</th><th>Expiration</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for m in medicines %}
+                <tr>
+                    <td>{{ m.name }}</td>
+                    <td>{{ m.category or '—' }}</td>
+                    <td>{{ m.quantity }}</td>
+                    <td>{{ m.expiration_date or '—' }}</td>
+                    <td class="btn-group">
+                        <a href="{{ url_for('medicines.edit_medicine', medicine_id=m.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                        <form method="POST" action="{{ url_for('medicines.delete_medicine', medicine_id=m.id) }}" style="display:inline;" onsubmit="return confirm('Remove this medicine?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="empty-state">No medicines in inventory.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

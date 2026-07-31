@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BulSU Clinic{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>BulSU Clinic</h2>
+                <p>Record Management System</p>
+            </div>
+            <nav>
+                <a href="{{ url_for('dashboard.index') }}" class="{% if request.endpoint == 'dashboard.index' %}active{% endif %}">Dashboard</a>
+
+                {% if session.get('role') == 'staff' %}
+                <a href="{{ url_for('patients.list_patients') }}" class="{% if 'patients' in request.endpoint %}active{% endif %}">Patient Records</a>
+                <a href="{{ url_for('visits.list_visits') }}" class="{% if 'visits' in request.endpoint %}active{% endif %}">Clinic Visits</a>
+                <a href="{{ url_for('appointments.list_appointments') }}" class="{% if 'appointments' in request.endpoint %}active{% endif %}">Appointments</a>
+                <a href="{{ url_for('medicines.list_medicines') }}" class="{% if 'medicines' in request.endpoint %}active{% endif %}">Medicine Inventory</a>
+                <a href="{{ url_for('reports.index') }}" class="{% if 'reports' in request.endpoint %}active{% endif %}">Reports</a>
+                <a href="{{ url_for('activities.list_activities') }}" class="{% if 'activities' in request.endpoint %}active{% endif %}">Activity Log</a>
+                <a href="{{ url_for('staff_mgmt.list_staff') }}" class="{% if 'staff_mgmt' in request.endpoint %}active{% endif %}">Staff Management</a>
+                {% else %}
+                <a href="{{ url_for('patients.my_profile') }}" class="{% if 'patients' in request.endpoint %}active{% endif %}">My Profile</a>
+                <a href="{{ url_for('visits.my_history') }}" class="{% if 'visits' in request.endpoint %}active{% endif %}">Clinic History</a>
+                <a href="{{ url_for('appointments.list_appointments') }}" class="{% if 'appointments' in request.endpoint %}active{% endif %}">Appointments</a>
+                <a href="{{ url_for('activities.list_activities') }}" class="{% if 'activities' in request.endpoint %}active{% endif %}">My Activity</a>
+                {% endif %}
+
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <span>BulSU Clinic Record Management System</span>
+                <span class="topbar-user">
+                    {{ session.get('username') }} ({{ session.get('role') | capitalize }})
+                </span>
+            </header>
+
+            <main class="content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+</html>

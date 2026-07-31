@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if patient else 'Add' }} Patient - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ 'Edit' if patient else 'Add' }} Patient Record</h1>
+</div>
+
+<div class="card">
+    <form method="POST">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="student_id">Student ID *</label>
+                <input type="text" id="student_id" name="student_id" value="{{ patient.student_id if patient else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name *</label>
+                <input type="text" id="first_name" name="first_name" value="{{ patient.first_name if patient else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" value="{{ patient.last_name if patient else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="course">Course / Program</label>
+                <input type="text" id="course" name="course" value="{{ patient.course if patient else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="year_level">Year Level</label>
+                <input type="text" id="year_level" name="year_level" value="{{ patient.year_level if patient else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="contact_number">Contact Number</label>
+                <input type="text" id="contact_number" name="contact_number" value="{{ patient.contact_number if patient else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="emergency_contact">Emergency Contact</label>
+                <input type="text" id="emergency_contact" name="emergency_contact" value="{{ patient.emergency_contact if patient else '' }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="medical_history">Medical History</label>
+            <textarea id="medical_history" name="medical_history">{{ patient.medical_history if patient else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="allergies">Allergies</label>
+            <textarea id="allergies" name="allergies">{{ patient.allergies if patient else '' }}</textarea>
+        </div>
+
+        {% if not patient %}
+        <hr style="margin:1.5rem 0;border:none;border-top:1px solid #e2e8f0;">
+        <p style="font-size:0.85rem;color:#64748b;margin-bottom:1rem;">Optional: Create login account for this patient</p>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ 'Update' if patient else 'Create' }} Patient</button>
+            <a href="{{ url_for('patients.list_patients') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

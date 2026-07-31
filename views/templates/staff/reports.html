@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Reports - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Clinic Reports</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_visits }}</div>
+        <div class="stat-label">Total Clinic Visits</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_patients }}</div>
+        <div class="stat-label">Total Patients</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-title">Appointment Summary</div>
+        {% if appointment_summary %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                <tbody>
+                    {% for status, count in appointment_summary.items() %}
+                    <tr>
+                        <td><span class="badge badge-{{ status }}">{{ status|capitalize }}</span></td>
+                        <td>{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">No appointment data.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-title">Common Reasons for Visits</div>
+        {% if common_reasons %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Reason</th><th>Count</th></tr></thead>
+                <tbody>
+                    {% for r in common_reasons %}
+                    <tr><td>{{ r.reason }}</td><td>{{ r.count }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">No visit data.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-title">Medicine Usage</div>
+        {% if medicine_usage %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Medicine</th><th>Category</th><th>Total Released</th></tr></thead>
+                <tbody>
+                    {% for m in medicine_usage %}
+                    <tr><td>{{ m.name }}</td><td>{{ m.category or '—' }}</td><td>{{ m.total_released }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">No medicine usage data.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-title">Inventory Status</div>
+        <p style="font-size:0.875rem;margin-bottom:0.75rem;">
+            <strong>{{ medicines|length }}</strong> medicines in inventory,
+            <strong style="color:var(--warning);">{{ low_stock|length }}</strong> low stock,
+            <strong style="color:var(--danger);">{{ expired|length }}</strong> expired
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Name</th><th>Qty</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for m in medicines %}
+                    <tr>
+                        <td>{{ m.name }}</td>
+                        <td>{{ m.quantity }}</td>
+                        <td>
+                            {% if m in expired %}
+                            <span class="badge badge-rejected">Expired</span>
+                            {% elif m in low_stock %}
+                            <span class="badge badge-pending">Low Stock</span>
+                            {% else %}
+                            <span class="badge badge-approved">OK</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

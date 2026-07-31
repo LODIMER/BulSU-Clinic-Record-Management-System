@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Patient Details - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ patient.first_name }} {{ patient.last_name }}</h1>
+    {% if not readonly %}
+    <a href="{{ url_for('patients.edit_patient', patient_id=patient.id) }}" class="btn btn-primary">Edit Patient</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-title">Patient Information</div>
+    <div class="detail-grid">
+        <div class="detail-item"><label>Student ID</label><p>{{ patient.student_id }}</p></div>
+        <div class="detail-item"><label>Course / Program</label><p>{{ patient.course or '—' }}</p></div>
+        <div class="detail-item"><label>Year Level</label><p>{{ patient.year_level or '—' }}</p></div>
+        <div class="detail-item"><label>Contact Number</label><p>{{ patient.contact_number or '—' }}</p></div>
+        <div class="detail-item"><label>Emergency Contact</label><p>{{ patient.emergency_contact or '—' }}</p></div>
+        {% if not readonly %}
+        <div class="detail-item"><label>Medical History</label><p>{{ patient.medical_history or '—' }}</p></div>
+        <div class="detail-item"><label>Allergies</label><p>{{ patient.allergies or '—' }}</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Clinic Visit History</div>
+    {% if visits %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Time</th><th>Reason</th><th>Treatment</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for v in visits %}
+                <tr>
+                    <td>{{ v.visit_date }}</td>
+                    <td>{{ v.visit_time }}</td>
+                    <td>{{ v.reason }}</td>
+                    <td>{{ v.treatment or '—' }}</td>
+                    <td><a href="{{ url_for('visits.view_visit', visit_id=v.id) }}" class="btn btn-secondary btn-sm">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No clinic visits recorded.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-title">Appointments</div>
+    {% if appointments %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Time</th><th>Reason</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for a in appointments %}
+                <tr>
+                    <td>{{ a.appointment_date }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+                    <td><span class="badge badge-{{ a.status }}">{{ a.status|capitalize }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No appointments.</p>
+    {% endif %}
+</div>
+{% endblock %}

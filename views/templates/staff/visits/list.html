@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Clinic Visits - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Clinic Visits</h1>
+    <a href="{{ url_for('visits.add_visit') }}" class="btn btn-primary">Record Visit</a>
+</div>
+
+<form class="search-bar" method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search visits...">
+    <button type="submit" class="btn btn-secondary">Search</button>
+</form>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Time</th><th>Patient</th><th>Reason</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for v in visits %}
+                <tr>
+                    <td>{{ v.visit_date }}</td>
+                    <td>{{ v.visit_time }}</td>
+                    <td>{{ v.first_name }} {{ v.last_name }} ({{ v.student_id }})</td>
+                    <td>{{ v.reason }}</td>
+                    <td><a href="{{ url_for('visits.view_visit', visit_id=v.id) }}" class="btn btn-secondary btn-sm">View</a></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="empty-state">No clinic visits found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

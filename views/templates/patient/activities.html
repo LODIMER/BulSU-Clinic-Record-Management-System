@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}My Activity - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Activity</h1>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Activity</th><th>Record</th><th>Date & Time</th></tr>
+            </thead>
+            <tbody>
+                {% for a in activities %}
+                <tr>
+                    <td>{{ a.activity }}</td>
+                    <td>{{ a.record_affected or '—' }}</td>
+                    <td>{{ a.created_at }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="empty-state">No activity recorded.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

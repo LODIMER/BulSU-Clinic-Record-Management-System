@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Patient Records - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Patient Records</h1>
+    <a href="{{ url_for('patients.add_patient') }}" class="btn btn-primary">Add Patient</a>
+</div>
+
+<form class="search-bar" method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search by name, student ID, or course...">
+    <button type="submit" class="btn btn-secondary">Search</button>
+</form>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>Contact</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                <tr>
+                    <td>{{ p.student_id }}</td>
+                    <td>{{ p.first_name }} {{ p.last_name }}</td>
+                    <td>{{ p.course or '—' }}</td>
+                    <td>{{ p.year_level or '—' }}</td>
+                    <td>{{ p.contact_number or '—' }}</td>
+                    <td class="btn-group">
+                        <a href="{{ url_for('patients.view_patient', patient_id=p.id) }}" class="btn btn-secondary btn-sm">View</a>
+                        <a href="{{ url_for('patients.edit_patient', patient_id=p.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="empty-state">No patients found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+from models.database import get_db
+
+
+class PatientModel:
+    @staticmethod
+    def create(data, user_id=None):
+        conn = get_db()
+        cursor = conn.execute(
+            """
+            INSERT INTO patients (
+                user_id, student_id, first_name, last_name, course, year_level,
+                contact_number, emergency_contact, medical_history, allergies
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                user_id,
+                data["student_id"],
+                data["first_name"],
+                data["last_name"],
+                data.get("course", ""),
+                data.get("year_level", ""),
+                data.get("contact_number", ""),
+                data.get("emergency_contact", ""),
+                data.get("medical_history", ""),
+                data.get("allergies", ""),
+            ),
+        )
+        conn.commit()
+        patient_id = cursor.lastrowid
+        conn.close()
+        return patient_id
+
+    @staticmethod
+    def get_by_id(patient_id):
+        conn = get_db()
+        row = conn.execute(
+            """
+            SELECT p.*, u.username
+            FROM patients p
+            LEFT JOIN users u ON p.user_id = u.id
+            WHERE p.id = ?
+            """,
+            (patient_id,),
+        ).fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    @staticmethod
+    def get_by_user_id(user_id):
+        conn = get_db()
+        row = conn.execute("SELECT * FROM patients WHERE user_id = ?", (user_id,)).fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    @staticmethod
+    def get_all(search=""):
+        conn = get_db()
+        query = """
+            SELECT p.*, u.username
+            FROM patients p
+            LEFT JOIN users u ON p.user_id = u.id
+        """
+        params = []
+        if search:
+            query += """
+                WHERE p.student_id LIKE ? OR p.first_name LIKE ?
+                OR p.last_name LIKE ? OR p.course LIKE ?
+            """
+            term = f"%{search}%"
+            params = [term, term, term, term]
+        query += " ORDER BY p.last_name, p.first_name"
+        rows = conn.execute(query, params).fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+
+    @staticmethod
+    def update(patient_id, data):
+        conn = get_db()
+        conn.execute(
+            """
+            UPDATE patients SET
+                student_id = ?, first_name = ?, last_name = ?, course = ?,
+                year_level = ?, contact_number = ?, emergency_contact = ?,
+                medical_history = ?, allergies = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (
+                data["student_id"],
+                data["first_name"],
+                data["last_name"],
+                data.get("course", ""),
+                data.get("year_level", ""),
+                data.get("contact_number", ""),
+                data.get("emergency_contact", ""),
+                data.get("medical_history", ""),
+                data.get("allergies", ""),
+                patient_id,
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def count():
+        conn = get_db()
+        count = conn.execute("SELECT COUNT(*) as total FROM patients").fetchone()["total"]
+        conn.close()
+        return count

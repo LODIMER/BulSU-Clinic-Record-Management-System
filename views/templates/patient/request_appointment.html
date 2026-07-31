@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Request Appointment - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Request Appointment</h1>
+</div>
+
+<div class="card">
+    <form method="POST">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="appointment_date">Preferred Date *</label>
+                <input type="date" id="appointment_date" name="appointment_date" required>
+            </div>
+            <div class="form-group">
+                <label for="appointment_time">Preferred Time *</label>
+                <input type="time" id="appointment_time" name="appointment_time" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="reason">Reason for Appointment *</label>
+            <textarea id="reason" name="reason" required placeholder="Describe your reason for visiting the clinic..."></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+            <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

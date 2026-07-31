@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Record Visit - BulSU Clinic{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Record Clinic Visit</h1>
+</div>
+
+<div class="card">
+    <form method="POST">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="patient_id">Patient *</label>
+                <select id="patient_id" name="patient_id" required>
+                    <option value="">Select patient...</option>
+                    {% for p in patients %}
+                    <option value="{{ p.id }}">{{ p.student_id }} - {{ p.first_name }} {{ p.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="visit_date">Date *</label>
+                <input type="date" id="visit_date" name="visit_date" required>
+            </div>
+            <div class="form-group">
+                <label for="visit_time">Time *</label>
+                <input type="time" id="visit_time" name="visit_time" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="reason">Reason for Visit *</label>
+            <input type="text" id="reason" name="reason" required>
+        </div>
+        <div class="form-group">
+            <label for="vital_signs">Vital Signs</label>
+            <textarea id="vital_signs" name="vital_signs" placeholder="BP, pulse, temperature, etc."></textarea>
+        </div>
+        <div class="form-group">
+            <label for="assessment">Assessment</label>
+            <textarea id="assessment" name="assessment"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="treatment">Treatment</label>
+            <textarea id="treatment" name="treatment"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes"></textarea>
+        </div>
+
+        <hr style="margin:1.5rem 0;border:none;border-top:1px solid #e2e8f0;">
+        <p style="font-size:0.85rem;color:#64748b;margin-bottom:1rem;">Medicine Given (optional)</p>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="medicine_id">Medicine</label>
+                <select id="medicine_id" name="medicine_id">
+                    <option value="">None</option>
+                    {% for m in medicines %}
+                    <option value="{{ m.id }}">{{ m.name }} (Stock: {{ m.quantity }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="medicine_quantity">Quantity</label>
+                <input type="number" id="medicine_quantity" name="medicine_quantity" min="0" value="0">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Visit Record</button>
+            <a href="{{ url_for('visits.list_visits') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
